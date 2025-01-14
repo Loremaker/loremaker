@@ -1,0 +1,5 @@
+# Ignore these folders from the NextJS build in Vercel
+.github/
+.vscode/
+supabase/**/*
+schema/
