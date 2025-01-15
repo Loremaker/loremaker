@@ -1,1 +1,1 @@
-# READ DIS ASS
+# README
