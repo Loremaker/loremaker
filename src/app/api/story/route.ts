@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No IP was found" }, { status: 400 });
   }
 
-  const rateLimitRequests = await get("rateLimitRequests");
+  const rateLimitRequests = await get("rateLimitRequests").catch(() => null);
   const defaultRequests = 20;
   const parsedRequests =
     typeof rateLimitRequests === "string"
