@@ -1,0 +1,52 @@
+import { DM_Sans } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
+
+import {
+  metadata as siteMetadata,
+  viewport as siteViewport,
+} from "@/config/site";
+import { ToastProvider } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils/cn";
+
+import "./globals.css";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+export const metadata = siteMetadata;
+export const viewport = siteViewport;
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          dmSans.variable
+        )}
+      >
+        <SpeedInsights />
+        <Analytics />
+        <NextTopLoader
+          color="#8a3ef4"
+          showSpinner={false}
+          easing="cubic-bezier(0.4, 0, 0.2, 1)"
+        />
+        <ToastProvider duration={2000} swipeDirection="right">
+          {children}
+          <Toaster />
+        </ToastProvider>
+      </body>
+    </html>
+  );
+}

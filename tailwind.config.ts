@@ -67,7 +67,16 @@ export default {
         xs: "2px",
       },
       screens: {
-        "xs": "375px",
+        xs: "375px",
+      },
+      keyframes: {
+        cursor: {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
+        },
+      },
+      animation: {
+        cursor: "cursor 1s step-end infinite",
       },
     },
   },

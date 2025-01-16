@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 222 47% 5%;
+    --foreground: 213 100% 96%;
+
+    --card: 222 47% 7%;
+    --card-foreground: 213 100% 96%;
+
+    --popover: 222 47% 7%;
+    --popover-foreground: 213 100% 96%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 213 100% 96%;
+
+    --secondary: 223 47% 20%;
+    --secondary-foreground: 213 100% 96%;
+
+    --muted: 223 47% 20%;
+    --muted-foreground: 215 20.2% 75.1%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 213 100% 96%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 213 100% 96%;
+
+    --border: 217 91% 25%;
+    --input: 223 47% 20%;
+    --ring: 224 76% 48%;
+  }
+
+  /* Using a medium-light purple for placeholder text */
+  ::placeholder {
+    color: hsl(217 50% 70%) !important;
+  }
+
+  ::-webkit-input-placeholder {
+    color: hsl(217 50% 70%) !important;
+  }
+
+  :-ms-input-placeholder {
+    color: hsl(217 50% 70%) !important;
+  }
+
+  ::-ms-input-placeholder {
+    color: hsl(217 50% 70%) !important;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 0.75em;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(217 91% 25%);
+    border-radius: var(--radius);
+    border: 2px solid hsl(222 47% 5%);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(217 91% 35%);
+  }
+
+  /* Change Autofill styles in Chrome*/
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: hsl(var(--foreground));
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px hsl(var(--primary) / 0.5);
+  }
+
+  /* Firefox specific autofill styling */
+  input:autofill,
+  input:autofill:hover,
+  input:autofill:focus,
+  input:autofill:active {
+    -webkit-text-fill-color: hsl(var(--foreground));
+    -webkit-box-shadow: 0 0 0px 1000px hsl(var(--primary) / 0.5) inset;
+    box-shadow: 0 0 0px 1000px hsl(var(--primary) / 0.5) inset;
+    background-color: hsl(var(--primary) / 0.5);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+.loading-spinner {
+  pointer-events: none;
+  display: inline-block;
+  aspect-ratio: 1/1;
+  background-color: currentColor;
+  -webkit-mask-size: 100%;
+  mask-size: 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  mask-image: url("/svg/loading-spinner.svg");
+  -webkit-mask-image: url("/svg/loading-spinner.svg");
+}
+
+/* Hide input controls for number type inputs */
+/*  */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+@keyframes blur-fade-in {
+  0% {
+    opacity: 0;
+    filter: blur(20px);
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes breathe-alt {
+  0% {
+    transform: scale(1.05);
+    opacity: 0.5;
+  }
+  33% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  66% {
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 0.5;
+  }
+}
+
+@keyframes shoot {
+  0% {
+    transform: translate(0, 0) rotate(-35deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-100vw - 200px), calc(100vh + 200px))
+      rotate(-35deg);
+    opacity: 0;
+  }
+}
+
+@property --random {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
