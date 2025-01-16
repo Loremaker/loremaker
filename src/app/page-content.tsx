@@ -25,14 +25,10 @@ import {
 } from "@/components/ui/form";
 
 const schema = z.object({
-  contractAddress: z
-    .string({
-      required_error: "Contract address is required",
-      invalid_type_error: "Contract address must be a string",
-    })
-    .refine((value) => PublicKey.isOnCurve(value), {
-      message: "Invalid contract address",
-    }),
+  contractAddress: z.string({
+    required_error: "Contract address is required",
+    invalid_type_error: "Contract address must be a string",
+  }),
 });
 
 const getRandomLoadingMessage = () => {
@@ -94,43 +90,68 @@ export default function PageContent() {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [storyName, setStoryName] = useState("");
   const [story, setStory] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [textCompleted, setTextCompleted] = useState(false);
+  const [canSkip, setCanSkip] = useState(false);
   const form = useForm<FormSchema>({ resolver: zodResolver(schema) });
 
   const onSubmit = async ({ contractAddress }: FormSchema) => {
-    setStoryName("");
-    setStory("");
+    try {
+      // Will throw if not a valid Solana address
+      if (!PublicKey.isOnCurve(contractAddress)) {
+        throw new Error("Invalid contract address");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      form.setError("contractAddress", {
+        message: "Invalid contract address",
+      });
+      return;
+    }
 
     try {
-      const [storyName, response] = await Promise.all([
-        fetch(`/api/story/name/${contractAddress}`).then((res) =>
-          res.json().then((data) => data.storyName)
-        ),
-        fetch(`/api/story`, {
-          method: "POST",
-          body: JSON.stringify({ contractAddress }),
-          keepalive: true,
-          headers: {
-            "Content-Type": "text/plain",
-            Connection: "keep-alive",
-            "Keep-Alive": "timeout=60",
-          },
-        }),
-      ]);
+      const storyNameResponse = await fetch(
+        `/api/story/name/${contractAddress}`
+      );
+      const storyName = await storyNameResponse
+        .json()
+        .then((data) => data.storyName);
+
+      if (!storyName) {
+        form.setError("contractAddress", {
+          message: "No coin found with that address",
+        });
+        return;
+      }
+
+      // Once we have the story name, we know the coin exists
+      setStoryName("");
+      setStory("");
+      setCanSkip(false);
+      const storyResponse = await fetch(`/api/story`, {
+        method: "POST",
+        body: JSON.stringify({ contractAddress }),
+        keepalive: true,
+        headers: {
+          "Content-Type": "text/plain",
+          Connection: "keep-alive",
+          "Keep-Alive": "timeout=60",
+        },
+      });
 
       setStoryName(storyName);
 
-      handleStreamResponse(response, {
+      await handleStreamResponse(storyResponse, {
         onStart: () => {
           setTextCompleted(false);
-          setIsLoading(true);
+          setIsStreaming(true);
         },
         onChunk: (chunk) => {
           setStory((prev) => (prev ? prev + chunk : chunk));
         },
         onFinish: () => {
-          setIsLoading(false);
+          setIsStreaming(false);
+          setCanSkip(true);
         },
         onError: (error) => {
           throw error;
@@ -210,7 +231,6 @@ export default function PageContent() {
               <Button
                 type="submit"
                 isLoading={form.formState.isSubmitting}
-                disabled={!form.formState.isValid}
                 loadingText={loadingMessage}
               >
                 Generate
@@ -229,11 +249,11 @@ export default function PageContent() {
       {story && (
         <Card ref={textContainerRef} className="w-full max-w-2xl mt-8">
           <CardContent className="p-6">
-            {!isLoading && !textCompleted && (
+            {(isStreaming || !textCompleted) && (
               <div className="flex justify-end">
                 <Button
                   variant="secondary"
-                  disabled={!form.formState.isValid}
+                  disabled={!canSkip || isStreaming}
                   onClick={() => setTextCompleted(true)}
                   title="Skip to the end"
                 >

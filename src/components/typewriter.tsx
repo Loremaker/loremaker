@@ -17,9 +17,14 @@ export const Typewriter = ({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Update the ref when new text comes in, but don't reset the animation
+  // And reset if the text is empty from new generation submission
   useEffect(() => {
-    fullTextRef.current = text;
-  }, [text, speed]);
+    if (!text && currentIndex > 1) {
+      fullTextRef.current = "";
+    } else {
+      fullTextRef.current = text;
+    }
+  }, [text, speed, currentIndex]);
 
   useEffect(() => {
     if (instant) {
