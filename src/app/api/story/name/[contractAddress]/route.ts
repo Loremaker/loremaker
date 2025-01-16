@@ -54,7 +54,10 @@ export async function GET(
   }
 
   try {
-    const coin = await getCoinData(contractAddress);
+    const { error, coin } = await getCoinData(contractAddress);
+    if (error || !coin) {
+      return NextResponse.json({ error }, { status: 404 });
+    }
     const storyName = await generateStoryName(coin.name);
     return NextResponse.json({ storyName });
   } catch (error) {

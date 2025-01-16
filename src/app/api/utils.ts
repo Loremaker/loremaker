@@ -75,7 +75,9 @@ export const contractAddressSchema = z
 
 export const getCoinData = async (
   contractAddress: string
-): Promise<CoinMetadata> => {
+): Promise<
+  { coin: CoinMetadata; error: null } | { coin: null; error: string }
+> => {
   const response = await fetch(
     `https://mainnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`,
     {
@@ -91,13 +93,24 @@ export const getCoinData = async (
     }
   );
 
-  const data: HeliusAssetResponse = await response.json();
+  const data = await response.json();
+  if (data?.error) {
+    if (data.error?.message.match(/Asset Not Found/i)) {
+      return { coin: null, error: "Coin not found" };
+    }
+    console.error(data.error);
+    return { coin: null, error: "Internal server error" };
+  }
+
   return {
-    name: data.result.content.metadata.name,
-    symbol: data.result.content.metadata.symbol,
-    description: data.result.content.metadata.description,
-    marketCap: calculateMarketCap(data),
-    currentPrice: data.result.token_info.price_info.price_per_token,
+    coin: {
+      name: data.result.content.metadata.name,
+      symbol: data.result.content.metadata.symbol,
+      description: data.result.content.metadata.description,
+      marketCap: calculateMarketCap(data),
+      currentPrice: data.result.token_info.price_info.price_per_token,
+    },
+    error: null,
   };
 };
 

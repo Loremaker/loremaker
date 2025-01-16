@@ -9,13 +9,23 @@ import { contractAddressSchema, getCoinData, streamStory } from "../utils";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
+const getRateLimitRequests = async () => {
+  try {
+    const rateLimitRequests = await get("rateLimitRequests");
+    return rateLimitRequests;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for");
   if (!ip) {
     return NextResponse.json({ error: "No IP was found" }, { status: 400 });
   }
 
-  const rateLimitRequests = await get("rateLimitRequests").catch(() => null);
+  const rateLimitRequests = await getRateLimitRequests();
   const defaultRequests = 20;
   const parsedRequests =
     typeof rateLimitRequests === "string"
@@ -63,7 +73,10 @@ export async function POST(request: NextRequest) {
 
   const { contractAddress } = parsed.data;
   try {
-    const coin = await getCoinData(contractAddress);
+    const { error, coin } = await getCoinData(contractAddress);
+    if (error || !coin) {
+      return NextResponse.json({ error }, { status: 404 });
+    }
     return streamStory(coin);
   } catch (error) {
     console.error(error);
