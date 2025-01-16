@@ -12,10 +12,6 @@
     "typecheck": "tsc --noEmit",
     "pre-deploy": "node ./scripts/pre-deploy.js",
     "analyze": "cross-env ANALYZE=true next build",
-    "supabase:serve": "supabase functions serve --env-file ./supabase/functions/.env.local",
-    "supabase:gen-types": "supabase gen types typescript --local > ./src/lib/supabase/database.ts",
-    "supabase:reset": "supabase db reset && npm run supabase:gen-types",
-    "supabase:dump": "supabase db dump --local --data-only > supabase/seed.sql",
     "git:reset": "git stash && git checkout main && git pull && git branch -D staging && git checkout -b staging && git push -uf origin staging && git stash pop"
   },
   "dependencies": {
