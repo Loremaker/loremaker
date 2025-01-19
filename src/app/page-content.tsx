@@ -23,11 +23,9 @@ export default function PageContent() {
       </nav>
 
       <div className="px-2 text-center">
-        <h1 className="text-4xl font-bold mb-2">
-          Meme Coin Folk-lore Generator
-        </h1>
+        <h1 className="text-4xl font-bold mb-2">Meme Coin Story Generator</h1>
         <p className="text-xl text-blue-400 mb-8">
-          Unleash the power of AI to create legendary tales for your meme coins!
+          Create your own crazy tales for your meme coins!
         </p>
       </div>
 
