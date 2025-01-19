@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { get } from "@vercel/edge-config";
 import { captureException } from "@sentry/nextjs";
 
 import { RateLimiter } from "@/lib/rate-limiter";
@@ -18,15 +17,9 @@ export async function GET(
     return NextResponse.json({ error: "No IP was found" }, { status: 400 });
   }
 
-  const rateLimitRequests = await get("rateLimitRequests");
-  const defaultRequests = 20;
-  const parsedRequests =
-    typeof rateLimitRequests === "string"
-      ? parseInt(rateLimitRequests) || defaultRequests
-      : defaultRequests;
 
   const rateLimiter = RateLimiter({
-    requests: parsedRequests,
+    requests: 20,
     period: "30 s",
   });
   const { success, reset } = await rateLimiter.limit(ip);

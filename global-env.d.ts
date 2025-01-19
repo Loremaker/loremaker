@@ -97,6 +97,6 @@ export declare global {
     contractAddress: string;
     coin: string;
     timestamp: int;
-    story: string;
+    text: string;
   }
 }
