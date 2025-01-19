@@ -10,7 +10,7 @@ import {
 import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils/cn";
-
+import { Header } from "@/components/header";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -38,11 +38,12 @@ export default function RootLayout({
         <SpeedInsights />
         <Analytics />
         <NextTopLoader
-          color="#8a3ef4"
+          color="#3b82f6"
           showSpinner={false}
           easing="cubic-bezier(0.4, 0, 0.2, 1)"
         />
         <ToastProvider duration={2000} swipeDirection="right">
+          <Header />
           {children}
           <Toaster />
         </ToastProvider>
