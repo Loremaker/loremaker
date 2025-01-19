@@ -1,8 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { ApexOptions } from "apexcharts";
 import React from "react";
-import Chart from "react-apexcharts";
+
+const Chart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
 const tokenomicsData = [
   {
