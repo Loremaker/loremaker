@@ -41,7 +41,7 @@ export default function RootLayout({
         />
         <ToastProvider duration={2000} swipeDirection="right">
           <Header />
-          <main className="flex flex-col items-center justify-start mt-36 pb-6">
+          <main className="flex flex-col items-center justify-start mt-56 lg:mt-36 pb-6">
             {children}
           </main>
           <Toaster />
