@@ -14,7 +14,7 @@ export default function PageContent() {
   const [canSkip, setCanSkip] = useState(false);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start mt-16 pb-12 pt-24 px-4 sm:px-12 lg:pt-24">
+    <>
       <GenerateStory
         setStoryName={setStoryName}
         setStory={setStory}
@@ -32,6 +32,6 @@ export default function PageContent() {
         setTextCompleted={setTextCompleted}
         canSkip={canSkip}
       />
-    </main>
+    </>
   );
 }

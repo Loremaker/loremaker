@@ -30,10 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          dmSans.variable
-        )}
+        className={cn("bg-background font-sans antialiased", dmSans.variable)}
       >
         <SpeedInsights />
         <Analytics />
@@ -44,7 +41,9 @@ export default function RootLayout({
         />
         <ToastProvider duration={2000} swipeDirection="right">
           <Header />
-          {children}
+          <main className="flex flex-col items-center justify-start mt-36 pb-6">
+            {children}
+          </main>
           <Toaster />
         </ToastProvider>
       </body>
