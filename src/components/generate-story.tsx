@@ -31,6 +31,10 @@ const getRandomLoadingMessage = () => {
   return LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
 };
 
+// const storeStory = (contractAddress: string, story: Story) => {
+//   localStorage.setItem(`story-${contractAddress}`, JSON.stringify(story));
+// };
+
 type FormSchema = z.infer<typeof schema>;
 
 export function GenerateStory({
@@ -98,13 +102,29 @@ export function GenerateStory({
         onStart: () => {
           setTextCompleted(false);
           setIsStreaming(true);
+          // Store the initial story
         },
         onChunk: (chunk) => {
           setStory((prev) => (prev ? prev + chunk : chunk));
         },
-        onFinish: () => {
+        onFinish: async () => {
           setIsStreaming(false);
           setCanSkip(true);
+          // try {
+          //   localStorage.setItem(
+          //     `story-${contractAddress}`,
+          //     JSON.stringify(story)
+          //   );
+          // } catch (error) {
+          //   console.error("Failed to store story:", error);
+          //   captureException(error, {
+          //     extra: {
+          //       contractAddress,
+          //       action: "storing_story",
+          //     },
+          //   });
+          //   // Don't show error to user since the story generation succeeded
+          // }
         },
         onError: (error) => {
           throw error;

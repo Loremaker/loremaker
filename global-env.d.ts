@@ -5,6 +5,7 @@ export declare global {
       SENTRY_PROJECT: string;
       SENTRY_ORG: string;
       SENTRY_AUTH_TOKEN: string;
+      NEXT_PUBLIC_SENTRY_DSN: string;
       UPSTASH_REDIS_REST_URL: string;
       UPSTASH_REDIS_REST_TOKEN: string;
       OPENAI_API_KEY: string;
@@ -96,5 +97,6 @@ export declare global {
     contractAddress: string;
     coin: string;
     timestamp: int;
+    story: string;
   }
 }

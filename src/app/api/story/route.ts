@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { get } from "@vercel/edge-config";
 import { captureException } from "@sentry/nextjs";
 
 import { RateLimiter } from "@/lib/rate-limiter";
@@ -9,15 +8,6 @@ import { contractAddressSchema, getCoinData, streamStory } from "../utils";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-const getRateLimitRequests = async () => {
-  try {
-    const rateLimitRequests = await get("rateLimitRequests");
-    return rateLimitRequests;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for");
@@ -25,15 +15,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No IP was found" }, { status: 400 });
   }
 
-  const rateLimitRequests = await getRateLimitRequests();
-  const defaultRequests = 20;
-  const parsedRequests =
-    typeof rateLimitRequests === "string"
-      ? parseInt(rateLimitRequests) || defaultRequests
-      : defaultRequests;
-
   const rateLimiter = RateLimiter({
-    requests: parsedRequests,
+    requests: 20,
     period: "30 s",
   });
   const { success, reset } = await rateLimiter.limit(ip);
