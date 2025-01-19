@@ -38,7 +38,7 @@ export function Story({
           </div>
         )}
         <div className="flex justify-between items-center py-4 max-h-[400px] overflow-y-auto">
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-2xl font-bold text-center px-2 lg:px-8">
             <Typewriter text={storyName} speed={95} />
           </h2>
         </div>
