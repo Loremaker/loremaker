@@ -90,4 +90,11 @@ export declare global {
     marketCap: number;
     currentPrice: number;
   }
+
+  interface Story {
+    title: string;
+    contractAddress: string;
+    coin: string;
+    timestamp: int;
+  }
 }

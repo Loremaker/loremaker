@@ -80,8 +80,6 @@ export function GenerateStory({
       }
 
       // Once we have the story name, we know the coin exists
-      setStoryName("");
-      setStory("");
       setCanSkip(false);
       const storyResponse = await fetch(`/api/story`, {
         method: "POST",
@@ -143,8 +141,8 @@ export function GenerateStory({
   }, [form.formState.isSubmitting]);
 
   return (
-    <Card className="w-full max-w-2xl bg-gray-900 border-blue-500">
-      <CardContent className="p-6">
+    <Card className="w-full bg-gray-900 border-blue-500">
+      <CardContent className="p-6 w-full">
         <Form {...form}>
           <form
             noValidate
