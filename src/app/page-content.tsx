@@ -91,14 +91,14 @@ export default function PageContent() {
           </TabsContent>
         </Tabs>
 
-        <GenerateAudio story={story} canSkip={canSkip} />
+        <GenerateAudio story={loadedStory?.text || story} canSkip={canSkip} />
       </div>
 
       {loadedStory || story ? (
         <div className="w-full">
           <Story
-            story={loadedStory?.text || story || ""}
-            storyName={loadedStory?.title || storyName || ""}
+            story={loadedStory?.text || story}
+            storyName={loadedStory?.title || storyName}
             textContainerRef={textContainerRef}
             isStreaming={isStreaming}
             textCompleted={textCompleted}

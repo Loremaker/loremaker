@@ -3,7 +3,7 @@ import { ContractAddress } from "./contract-address";
 
 export function Header() {
   return (
-    <header className="max-w-[1560px] mx-auto mb-4 top-0 left-0 right-0 bg-transparent backdrop-blur-lg py-5 z-50">
+    <header className="max-w-[1560px] mx-auto mb-4 top-0 left-0 right-0 bg-transparent backdrop-blur-lg py-6 z-50">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center justify-between h-auto lg:h-16 gap-4 lg:gap-0">
           <div className="flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
