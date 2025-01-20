@@ -6,6 +6,11 @@ import React from "react";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
+  loading: () => (
+    <div className="flex flex-col items-center justify-center h-full py-4">
+      <h2 className="text-2xl font-bold">Loading Chart...</h2>
+    </div>
+  ),
 });
 
 const tokenomicsData = [

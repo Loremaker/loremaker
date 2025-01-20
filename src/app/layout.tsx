@@ -39,9 +39,9 @@ export default function RootLayout({
           showSpinner={false}
           easing="cubic-bezier(0.4, 0, 0.2, 1)"
         />
-        <ToastProvider duration={2000} swipeDirection="right">
+        <ToastProvider swipeDirection="right">
           <Header />
-          <main className="flex flex-col items-center justify-start mt-56 lg:mt-36 pb-6">
+          <main className="flex flex-col items-center justify-start p-6">
             {children}
           </main>
           <Toaster />

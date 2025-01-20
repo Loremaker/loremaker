@@ -35,6 +35,8 @@ body {
     --border: 217 91% 25%;
     --input: 223 47% 20%;
     --ring: 224 76% 48%;
+
+    --radius: 0.5rem;
   }
 
   /* Using a medium-light purple for placeholder text */

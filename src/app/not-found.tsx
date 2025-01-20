@@ -2,6 +2,10 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
+export const metadata = {
+  layout: false,
+};
+
 export default async function NotFound() {
   return (
     <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-blue-950 via-blue-900/30 to-blue-800/30">

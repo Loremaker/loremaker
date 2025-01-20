@@ -8,7 +8,7 @@ export default function TokenomicsPage() {
   return (
     <div className="container mx-auto px-4">
       <Card className="max-w-4xl mx-auto bg-gray-900 border-blue-500">
-        <CardHeader className="!pb-0 lg:pb-6">
+        <CardHeader>
           <CardTitle className="text-3xl font-bold">
             Token Distribution
           </CardTitle>

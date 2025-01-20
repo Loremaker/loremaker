@@ -31,6 +31,10 @@ export default function PageContent() {
     setReset(true);
     setCanSkip(true);
     setTextCompleted(true);
+
+    if (textContainerRef.current) {
+      textContainerRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
