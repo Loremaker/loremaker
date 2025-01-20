@@ -104,6 +104,11 @@ export function GenerateStory({
         onStart: () => {
           storyChunks = "";
           onStartStreaming();
+          toast({
+            title: "Generating story...",
+            description:
+              "The content will be displayed as it is generated. Once it is complete, you can skip to the end and will be saved automatically.",
+          });
         },
         onChunk: (chunk) => {
           setStory((prev) => (prev ? prev + chunk : chunk));
@@ -119,6 +124,11 @@ export function GenerateStory({
             coin,
             timestamp: Date.now(),
             text: storyChunks,
+          });
+          toast({
+            title: "Story generated",
+            description:
+              "You can skip to display the entire story. It is also saved in your history.",
           });
         },
         onError: (error) => {
