@@ -59,7 +59,7 @@ export function StoryHistory({
   return (
     <Card className="flex flex-col h-full max-h-[600px] bg-gray-900 border-blue-500">
       <CardContent className="flex-1 p-0">
-        <ScrollArea className="h-[600px]">
+        <ScrollArea className="h-[544px]">
           <div className="space-y-4 p-6">
             {stories.map((item, index) => (
               <Card
