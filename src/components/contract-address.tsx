@@ -8,7 +8,7 @@ export function ContractAddress({ address }: { address: string }) {
 
   return (
     <div
-      className="flex bg-gray-900 border border-border/40 text-sm items-center rounded-md px-3 py-1 gap-2 group cursor-pointer relative flex-wrap md:flex-nowrap"
+      className="flex bg-gray-900 border border-border/40 text-sm items-center rounded-md px-3 py-1 gap-2 group cursor-pointer relative flex-wrap md:flex-nowrap hover:bg-gray-800/90 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] transition-all"
       onClick={() => {
         navigator.clipboard.writeText(address);
         setCopied(true);
