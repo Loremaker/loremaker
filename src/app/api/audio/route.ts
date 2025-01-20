@@ -46,12 +46,10 @@ export async function POST(request: NextRequest) {
 
     const rawAudioResponse = await audioResponse.text();
     const audioData = Buffer.from(rawAudioResponse, "base64");
-    // @ts-expect-error - It's a buffer...
     return new Response(audioData, {
       status: 200,
       headers: {
         "Content-Type": "audio/wav",
-        // @ts-expect-error - It's a buffer...
         "Content-Length": audioData.length.toString(),
         "Cache-Control": "public, max-age=31536000", // Cache for 1 year
       },
