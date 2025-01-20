@@ -1,6 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { captureException } from "@sentry/nextjs";
+
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface GenerateAudioProps {
   story: string;
@@ -18,14 +28,16 @@ const speakers = [
   "Ethan",
   "Lucas",
   "Noah",
-];
+] as const;
 
-export const GenerateAudio: React.FC<GenerateAudioProps> = ({ story, canSkip }) => {
+export const GenerateAudio: React.FC<GenerateAudioProps> = ({
+  story,
+  canSkip,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [selectedSpeaker, setSelectedSpeaker] = useState(speakers[0]);
-  const [uploadedAudio, setUploadedAudio] = useState<File | null>(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<string>(speakers[0]);
 
   useEffect(() => {
     return () => {
@@ -46,108 +58,91 @@ export const GenerateAudio: React.FC<GenerateAudioProps> = ({ story, canSkip }) 
     setAudioUrl(null);
 
     try {
-      let body: any = { text: story };
-
-      if (uploadedAudio) {
-        const reader = new FileReader();
-        const base64Promise = new Promise<string>((resolve, reject) => {
-          reader.onload = () => {
-            const result = (reader.result as string).replace(/^data:audio\/\w+;base64,/, "");
-            resolve(result);
-          };
-          reader.onerror = reject;
-        });
-
-        reader.readAsDataURL(uploadedAudio);
-        const base64Audio = await base64Promise;
-        body.custom_speaker = base64Audio;
-      } else {
-        body.speaker = `${selectedSpeaker}.wav`;
-      }
-
       const response = await fetch("/api/audio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          text: story,
+          speaker: `${selectedSpeaker}.wav`,
+        }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(
-          `Error ${response.status}: ${errorText || "Failed to generate audio."}`
+          `Error ${response.status}: ${
+            errorText || "Failed to generate audio."
+          }`
         );
       }
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
-    } catch (err: any) {
-      console.error("Failed to generate audio:", err);
-      setError(err.message || "An unexpected error occurred.");
+    } catch (err) {
+      const error = err as Error;
+      console.error("Failed to generate audio:", error);
+      setError(error.message || "An unexpected error occurred.");
+      captureException(error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="mt-4">
-      <label htmlFor="speaker" className="block mb-2 text-gray-700">
-        Select Speaker:
-      </label>
-      <select
-        id="speaker"
-        value={selectedSpeaker}
-        onChange={(e) => setSelectedSpeaker(e.target.value)}
-        className="mb-4 px-4 py-2 border rounded-md"
-        disabled={!!uploadedAudio}
-      >
-        {speakers.map((speaker) => (
-          <option key={speaker} value={speaker}>
-            {speaker}
-          </option>
-        ))}
-      </select>
+    <div className="space-y-4">
+      <div className="inline-flex gap-2">
+        <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select a voice" />
+          </SelectTrigger>
+          <SelectContent>
+            {speakers.map((speaker) => (
+              <SelectItem key={speaker} value={speaker}>
+                {speaker}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      <label htmlFor="audioUpload" className="block mb-2 text-gray-700">
-        Or upload a custom speaker audio:
-      </label>
-      <input
-        id="audioUpload"
-        type="file"
-        accept="audio/*"
-        onChange={(e) => setUploadedAudio(e.target.files?.[0] || null)}
-        className="mb-4 px-4 py-2 border rounded-md"
-      />
+        <Button
+          onClick={handleGenerateAudio}
+          disabled={loading || !story || !canSkip}
+          variant="default"
+        >
+          {loading ? (
+            <>
+              <span className="animate-spin mr-2">⏳</span>
+              Generating audio...
+            </>
+          ) : (
+            "Generate Audio"
+          )}
+        </Button>
+      </div>
 
-      <button
-        onClick={handleGenerateAudio}
-        disabled={loading || !story || !canSkip}
-        className={`px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50`}
-      >
-        {loading ? "Generating..." : "Generate Audio"}
-      </button>
+      <div className="flex flex-col gap-2">
+        {!canSkip && (
+          <p className="text-sm text-muted-foreground">
+            Please wait until the story generation is complete to generate
+            audio.
+          </p>
+        )}
 
-      {!canSkip && (
-        <p className="mt-2 text-gray-500">
-          Please wait until the story generation is complete to generate audio.
-        </p>
-      )}
+        {error && (
+          <p className="text-sm font-medium text-destructive">Error: {error}</p>
+        )}
 
-      {error && (
-        <p className="mt-2 text-red-500">Error: {error}</p>
-      )}
-
-      {audioUrl && (
-        <div className="mt-4">
-          <audio controls src={audioUrl}>
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      )}
+        {audioUrl && (
+          <div className="rounded-md border p-4 bg-muted/50">
+            <audio className="w-full" controls src={audioUrl}>
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
-
-// export default GenerateAudio;

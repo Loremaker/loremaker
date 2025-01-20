@@ -45,7 +45,7 @@ export default function PageContent() {
       } gap-8`}
     >
       <div
-        className={`w-full ${
+        className={`w-full flex flex-col gap-8 ${
           !story && !loadedStory ? "max-w-2xl mx-auto" : ""
         }`}
       >
@@ -84,13 +84,14 @@ export default function PageContent() {
               setReset={setReset}
               onStartStreaming={onStartStreaming}
             />
-            <GenerateAudio story={story} canSkip={canSkip} />
           </TabsContent>
 
           <TabsContent value="history" className="mt-6">
             <StoryHistory loadStory={loadStory} />
           </TabsContent>
         </Tabs>
+
+        <GenerateAudio story={story} canSkip={canSkip} />
       </div>
 
       {loadedStory || story ? (

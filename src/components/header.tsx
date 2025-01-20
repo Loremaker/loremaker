@@ -11,7 +11,7 @@ export function Header() {
               <LogoText />
             </div>
             <p className="text-sm text-muted-foreground">
-              Create your own crazy tales for your meme coins!
+              Create your own crazy tales for your meme coins
             </p>
           </div>
 
