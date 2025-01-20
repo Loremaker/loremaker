@@ -17,6 +17,7 @@ import { AudioPlayer } from "./audio-player";
 
 interface GenerateAudioProps {
   story: string;
+  storyName: string;
   canSkip: boolean;
 }
 
@@ -35,6 +36,7 @@ const speakers = [
 
 export const GenerateAudio: React.FC<GenerateAudioProps> = ({
   story,
+  storyName,
   canSkip,
 }) => {
   const { toast } = useToast();
@@ -58,8 +60,13 @@ export const GenerateAudio: React.FC<GenerateAudioProps> = ({
     setIsLoading(true);
     setAudioUrl(null);
     toast({
-      title: "Generating audio...",
-      description: "The story is being converted to audio for narration.",
+      title: "Generating audio",
+      description: (
+        <span>
+          The story <strong>{storyName}</strong> is being converted to audio for
+          narration.
+        </span>
+      ),
     });
 
     try {

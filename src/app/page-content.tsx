@@ -91,7 +91,11 @@ export default function PageContent() {
           </TabsContent>
         </Tabs>
 
-        <GenerateAudio story={loadedStory?.text || story} canSkip={canSkip} />
+        <GenerateAudio
+          story={loadedStory?.text || story}
+          storyName={loadedStory?.title || storyName}
+          canSkip={canSkip}
+        />
       </div>
 
       {loadedStory || story ? (
