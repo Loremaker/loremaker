@@ -11,6 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+
+import { AudioPlayer } from "./audio-player";
 
 interface GenerateAudioProps {
   story: string;
@@ -34,8 +37,8 @@ export const GenerateAudio: React.FC<GenerateAudioProps> = ({
   story,
   canSkip,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [selectedSpeaker, setSelectedSpeaker] = useState<string>(speakers[0]);
 
@@ -49,13 +52,15 @@ export const GenerateAudio: React.FC<GenerateAudioProps> = ({
 
   const handleGenerateAudio = async () => {
     if (!story) {
-      setError("No story available to generate audio.");
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    setIsLoading(true);
     setAudioUrl(null);
+    toast({
+      title: "Generating audio...",
+      description: "The story is being converted to audio for narration.",
+    });
 
     try {
       const response = await fetch("/api/audio", {
@@ -84,10 +89,14 @@ export const GenerateAudio: React.FC<GenerateAudioProps> = ({
     } catch (err) {
       const error = err as Error;
       console.error("Failed to generate audio:", error);
-      setError(error.message || "An unexpected error occurred.");
       captureException(error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while generating audio.",
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -109,17 +118,10 @@ export const GenerateAudio: React.FC<GenerateAudioProps> = ({
 
         <Button
           onClick={handleGenerateAudio}
-          disabled={loading || !story || !canSkip}
-          variant="default"
+          disabled={!story || !canSkip}
+          isLoading={isLoading}
         >
-          {loading ? (
-            <>
-              <span className="animate-spin mr-2">⏳</span>
-              Generating audio...
-            </>
-          ) : (
-            "Generate Audio"
-          )}
+          Generate Audio
         </Button>
       </div>
 
@@ -131,17 +133,7 @@ export const GenerateAudio: React.FC<GenerateAudioProps> = ({
           </p>
         )}
 
-        {error && (
-          <p className="text-sm font-medium text-destructive">Error: {error}</p>
-        )}
-
-        {audioUrl && (
-          <div className="rounded-md border p-4 bg-muted/50">
-            <audio className="w-full" controls src={audioUrl}>
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-        )}
+        {audioUrl && <AudioPlayer src={audioUrl} />}
       </div>
     </div>
   );
