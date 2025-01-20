@@ -31,9 +31,12 @@ const getRandomLoadingMessage = () => {
   return LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
 };
 
-// const storeStory = (contractAddress: string, story: Story) => {
-//   localStorage.setItem(`story-${contractAddress}`, JSON.stringify(story));
-// };
+const storeStory = (story: Story) => {
+  localStorage.setItem(
+    `story-${story.contractAddress}-${story.timestamp}`,
+    JSON.stringify(story)
+  );
+};
 
 type FormSchema = z.infer<typeof schema>;
 
@@ -41,25 +44,25 @@ export function GenerateStory({
   setStoryName,
   setStory,
   setCanSkip,
-  setTextCompleted,
   setIsStreaming,
+  setReset,
+  onStartStreaming,
 }: {
   setStoryName: (storyName: string) => void;
   setStory: React.Dispatch<React.SetStateAction<string>>;
   setCanSkip: (canSkip: boolean) => void;
-  setTextCompleted: (textCompleted: boolean) => void;
   setIsStreaming: (isStreaming: boolean) => void;
+  setReset: (reset: boolean) => void;
+  onStartStreaming: () => void;
 }) {
   const { toast } = useToast();
   const [loadingMessage, setLoadingMessage] = useState("");
   const form = useForm<FormSchema>({ resolver: zodResolver(schema) });
+  let storyChunks = "";
 
   const onSubmit = async ({ contractAddress }: FormSchema) => {
     try {
-      // Will throw if not a valid Solana address
-      if (!PublicKey.isOnCurve(contractAddress)) {
-        throw new Error("Invalid contract address");
-      }
+      new PublicKey(contractAddress);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       form.setError("contractAddress", {
@@ -72,10 +75,7 @@ export function GenerateStory({
       const storyNameResponse = await fetch(
         `/api/story/name/${contractAddress}`
       );
-      const storyName = await storyNameResponse
-        .json()
-        .then((data) => data.storyName);
-
+      const { storyName, coin } = await storyNameResponse.json();
       if (!storyName) {
         form.setError("contractAddress", {
           message: "No coin found with that address",
@@ -90,6 +90,7 @@ export function GenerateStory({
         body: JSON.stringify({ contractAddress }),
         keepalive: true,
         headers: {
+          "Cache-Control": "no-cache", // Prevent caching to be able to generate a new one
           "Content-Type": "text/plain",
           Connection: "keep-alive",
           "Keep-Alive": "timeout=60",
@@ -97,36 +98,31 @@ export function GenerateStory({
       });
 
       setStoryName(storyName);
+      setStory("");
 
       await StreamHandler(storyResponse, {
         onStart: () => {
-          setTextCompleted(false);
-          setIsStreaming(true);
-          // Store the initial story
+          storyChunks = "";
+          onStartStreaming();
         },
         onChunk: (chunk) => {
           setStory((prev) => (prev ? prev + chunk : chunk));
+          storyChunks += chunk;
         },
-        onFinish: async () => {
+        onFinish: () => {
           setIsStreaming(false);
           setCanSkip(true);
-          // try {
-          //   localStorage.setItem(
-          //     `story-${contractAddress}`,
-          //     JSON.stringify(story)
-          //   );
-          // } catch (error) {
-          //   console.error("Failed to store story:", error);
-          //   captureException(error, {
-          //     extra: {
-          //       contractAddress,
-          //       action: "storing_story",
-          //     },
-          //   });
-          //   // Don't show error to user since the story generation succeeded
-          // }
+          setReset(false);
+          storeStory({
+            title: storyName,
+            contractAddress,
+            coin,
+            timestamp: Date.now(),
+            text: storyChunks,
+          });
         },
         onError: (error) => {
+          setReset(true);
           throw error;
         },
       });

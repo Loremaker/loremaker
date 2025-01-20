@@ -16,14 +16,34 @@ export default function PageContent() {
   const [textCompleted, setTextCompleted] = useState(false);
   const [canSkip, setCanSkip] = useState(false);
   const [activeTab, setActiveTab] = useState("generate");
+  const [reset, setReset] = useState(false);
+  const [loadedStory, setLoadedStory] = useState<Story | null>(null);
+
+  const onStartStreaming = () => {
+    setTextCompleted(false);
+    setIsStreaming(true);
+    setReset(true);
+    setLoadedStory(null);
+  };
+
+  const loadStory = (story: Story) => {
+    setLoadedStory(story);
+    setReset(true);
+    setCanSkip(true);
+    setTextCompleted(true);
+  };
 
   return (
     <div
       className={`w-full max-w-2xl lg:max-w-7xl ${
-        story ? "grid grid-cols-1 lg:grid-cols-2" : ""
+        story || loadedStory ? "grid grid-cols-1 lg:grid-cols-2" : ""
       } gap-8`}
     >
-      <div className={`w-full ${!story ? "max-w-2xl mx-auto" : ""}`}>
+      <div
+        className={`w-full ${
+          !story && !loadedStory ? "max-w-2xl mx-auto" : ""
+        }`}
+      >
         <Tabs
           defaultValue="generate"
           className="w-full"
@@ -55,30 +75,33 @@ export default function PageContent() {
               setStoryName={setStoryName}
               setStory={setStory}
               setCanSkip={setCanSkip}
-              setTextCompleted={setTextCompleted}
               setIsStreaming={setIsStreaming}
+              setReset={setReset}
+              onStartStreaming={onStartStreaming}
             />
           </TabsContent>
 
           <TabsContent value="history" className="mt-6">
-            <StoryHistory />
+            <StoryHistory loadStory={loadStory} />
           </TabsContent>
         </Tabs>
       </div>
 
-      {story && (
+      {loadedStory || story ? (
         <div className="w-full">
           <Story
-            story={story}
-            storyName={storyName}
+            story={loadedStory?.text || story || ""}
+            storyName={loadedStory?.title || storyName || ""}
             textContainerRef={textContainerRef}
             isStreaming={isStreaming}
             textCompleted={textCompleted}
             setTextCompleted={setTextCompleted}
             canSkip={canSkip}
+            reset={reset}
+            setReset={setReset}
           />
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

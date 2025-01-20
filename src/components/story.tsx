@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { FastForward } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +16,8 @@ export function Story({
   textCompleted,
   setTextCompleted,
   canSkip,
+  reset,
+  setReset,
 }: {
   story: string;
   storyName: string;
@@ -23,7 +26,17 @@ export function Story({
   textCompleted: boolean;
   setTextCompleted: (textCompleted: boolean) => void;
   canSkip: boolean;
+  reset: boolean;
+  setReset: (reset: boolean) => void;
 }) {
+  useEffect(() => {
+    if (reset) {
+      setTextCompleted(false);
+      setReset(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reset]);
+
   return (
     <Card ref={textContainerRef} className="h-full max-h-[600px]">
       <CardContent className="px-0 py-6 h-full flex flex-col">
@@ -31,7 +44,6 @@ export function Story({
           {(isStreaming || !textCompleted) && (
             <div className="flex justify-end">
               <Button
-                variant="secondary"
                 disabled={!canSkip || isStreaming}
                 onClick={() => setTextCompleted(true)}
                 title="Skip to the end"
@@ -41,8 +53,8 @@ export function Story({
             </div>
           )}
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-center underline px-32 lg:px-10">
-              <Typewriter text={storyName} speed={95} />
+            <h2 className="text-2xl mx-auto font-bold text-center underline px-32 lg:px-10">
+              <Typewriter text={storyName} speed={95} reset={reset} />
             </h2>
           </div>
         </div>
@@ -51,9 +63,10 @@ export function Story({
           <div>
             <Typewriter
               text={story}
-              speed={50}
+              speed={10}
               instant={textCompleted}
               onFinish={() => setTextCompleted(true)}
+              reset={reset}
             />
           </div>
         </ScrollArea>

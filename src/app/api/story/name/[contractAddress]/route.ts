@@ -17,7 +17,6 @@ export async function GET(
     return NextResponse.json({ error: "No IP was found" }, { status: 400 });
   }
 
-
   const rateLimiter = RateLimiter({
     requests: 20,
     period: "30 s",
@@ -52,7 +51,7 @@ export async function GET(
       return NextResponse.json({ error }, { status: 404 });
     }
     const storyName = await generateStoryName(coin.name);
-    return NextResponse.json({ storyName });
+    return NextResponse.json({ coin: coin.name, storyName });
   } catch (error) {
     console.error(error);
     captureException(error, {

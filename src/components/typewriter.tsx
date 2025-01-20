@@ -5,26 +5,30 @@ export const Typewriter = ({
   speed = 50,
   instant = false,
   onFinish,
+  reset = false,
 }: {
   text?: string;
   speed?: number;
   instant?: boolean;
   onFinish?: () => void;
+  reset?: boolean;
 }) => {
   const fullTextRef = useRef(text);
   const containerRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Update the ref when new text comes in, but don't reset the animation
-  // And reset if the text is empty from new generation submission
+  // Only update the ref when text changes, don't reset unless explicitly told
   useEffect(() => {
-    if (!text && currentIndex > 1) {
-      fullTextRef.current = "";
-    } else {
-      fullTextRef.current = text;
+    fullTextRef.current = text;
+  }, [text]);
+
+  useEffect(() => {
+    if (reset) {
+      setDisplayText("");
+      setCurrentIndex(0);
     }
-  }, [text, speed, currentIndex]);
+  }, [reset]);
 
   useEffect(() => {
     if (instant) {
