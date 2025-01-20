@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GenerateStory } from "@/components/generate-story";
 import { StoryHistory } from "@/components/history";
 import { Story } from "@/components/story";
+import { GenerateAudio } from "@/components/generate-audio";
 
 export default function PageContent() {
   const textContainerRef = useRef<HTMLDivElement>(null);
@@ -83,6 +84,7 @@ export default function PageContent() {
               setReset={setReset}
               onStartStreaming={onStartStreaming}
             />
+            <GenerateAudio story={story} canSkip={canSkip} />
           </TabsContent>
 
           <TabsContent value="history" className="mt-6">
