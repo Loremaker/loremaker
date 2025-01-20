@@ -50,8 +50,9 @@ export default function Roadmap() {
               <div className="space-y-2">
                 <p className="text-emerald-400">3 weeks</p>
                 <ul className="list-disc list-inside text-slate-300 space-y-1">
-                  <li>Download stories in different formats</li>
-                  <li>Download stories with narrated audio</li>
+                  <li>
+                    Download stories with text and audio in different formats
+                  </li>
                   <li>Customize story settings</li>
                   <li>Upload custom voice</li>
                 </ul>

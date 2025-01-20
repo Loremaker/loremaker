@@ -34,7 +34,7 @@ export function Story({
       setTextCompleted(false);
       setReset(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reset]);
 
   return (
@@ -59,7 +59,7 @@ export function Story({
           </div>
         </div>
 
-        <ScrollArea className="flex-1 mt-8 px-16 lg:px-8">
+        <ScrollArea className="flex-1 mt-8 px-8">
           <div>
             <Typewriter
               text={story}
